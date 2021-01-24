@@ -30,6 +30,7 @@ class Candidate():
         self._totalvotes = 0
         self._minalgn = minalgn
         self._maxalgn = maxalgn
+        self._offsets = []
 
     def __str__(self):
         retstr = "Name: {0}".format(self._name)
@@ -93,6 +94,18 @@ class Candidate():
     @property
     def maxalgn(self):
         return (self._maxalgn)
+
+    @property
+    def offsets(self):
+        return (self._offsets)
+
+    @offsets.setter
+    def offsets(self, polalgns):
+        # print(str(polalgns))
+        # print(str(self._alignments.alignments))
+        self._offsets = [polalgns[idx].compare(self._alignments)
+                         for idx in range(len(polalgns))]
+        # print(str(self._offsets))
 
     def enddisp(self):
         dispstr = """{0}

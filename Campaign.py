@@ -68,14 +68,17 @@ class Campaign():
         candtypes = [ramc.RandAllocMachineCandidate,
                      rpamc.RandPropAllocMachineCandidate]
         polunitvotes = [pv.votes for pv in self._polunits]
-        polunitaligns = self.politicalunitsavgalignment
-        print(str(polunitaligns))
+        polalgns = [self._polunits[idx].algn
+                    for idx in range(len(self._polunits))]
+        avgaligns = self.politicalunitsavgalignment
+        print(str(avgaligns))
         if inclhuman:
             hoomin = hc.HumanCandidate("Human Player", None, self._minalgn,
                                        self._maxalgn)
             hoomin.initapproval(self._numpolunits)
             hoomin.unitvalues = polunitvotes
             hoomin.assignalign(self._alignments)
+            hoomin.offsets = polalgns
             # hoomin.allocall(self._numpolunits)
             self._candidates.append(hoomin)
         plcnt = len(self._candidates)
@@ -86,7 +89,8 @@ class Campaign():
                           self._maxalgn)
             cand.initapproval(self._numpolunits)
             cand.unitvalues = polunitvotes
-            cand.assignalign(polunitaligns)
+            cand.assignalign(avgaligns)
+            cand.offsets = polalgns
             # cand.allocall(self._numpolunits)
             self._candidates.append(cand)
             plcnt += 1
@@ -101,9 +105,11 @@ class Campaign():
             highestbid = -1
             bestcandidate = []
             for candidx in range(len(self._candidates)):
-                candbid = self._candidates[candidx].allocations[poluidx+1]
-                candalgn = self._candidates[candidx].alignments
-                offset = self._polunits[poluidx].algn.compare(candalgn)
+                cand = self._candidates[candidx]
+                candbid = cand.allocations[poluidx+1]
+                # candalgn = cand.alignments
+                # offset = self._polunits[poluidx].algn.compare(candalgn)
+                offset = cand.offsets[poluidx]
                 # print("offset = {0}".format(offset))
                 candbid += offset
                 # print("bid = {0}".format(candbid))
